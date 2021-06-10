@@ -3,6 +3,7 @@ import Bot from './utils/telegram'
 import { isURL } from './utils/index'
 import { createPage } from "./utils/notion"
 import { notionConfig } from "./config"
+import { getTitle } from "./utils/puppeteer"
 
 module.exports = async (req: VercelRequest, res: VercelResponse) => {
     if (!req.body) {
@@ -16,10 +17,7 @@ module.exports = async (req: VercelRequest, res: VercelResponse) => {
             return
         }
 
-        //TODO: get article title
-        const getUrlTitle = (url: string) => 'article from telegram forward'
-
-        const title = getUrlTitle(text)
+        const title = await getTitle(text)
 
         const reps = await createPage({
             type: notionConfig.article.type,

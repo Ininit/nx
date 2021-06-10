@@ -1,6 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node"
 import { createPage } from './utils/notion'
 import { notionConfig } from './config/index'
+import { getTitle } from "./utils/puppeteer"
 module.exports = async (req: VercelRequest, res: VercelResponse) => {
     
     try {
@@ -26,7 +27,7 @@ module.exports = async (req: VercelRequest, res: VercelResponse) => {
             type: notionConfig.article.type,
             id: notionConfig.article.id,
             url: body.url,
-            title: body.title,
+            title: body.title || getTitle(body.url),
         })
 
         res.send(`${reps.object}-${body.title} created success`)
