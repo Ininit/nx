@@ -3,18 +3,16 @@ import Bot from './utils/telegram'
 import { isURL } from './utils/index'
 import { createPage } from "./utils/notion"
 import { notionConfig } from "./config"
-import { getTitle } from "./utils/puppeteer"
+import { getTitle } from "./utils/cheerio"
 
 module.exports = async (req: VercelRequest, res: VercelResponse) => {
     if (!req.body) {
-        res.status(400).send('params format error')
-        return
+        return res.status(400).send('params format error')
     }
     try {
         const { message: { text, chat: { id }, message_id } } = req.body
         if (!isURL(text)) {
-            res.status(400).send('message type must be url')
-            return
+            return res.status(400).send('message type must be url')
         }
 
         const title = await getTitle(text)
@@ -26,14 +24,13 @@ module.exports = async (req: VercelRequest, res: VercelResponse) => {
             title
         })
         
-        Bot.sendMessage(id, `${reps.object}-${title} created success`, { reply_to_message_id: message_id })
-
-        res.send(`success`)
+        await Bot.sendMessage(id, `${reps.object}-${title} created success`, { reply_to_message_id: message_id })
 
     } catch (error) {
-        console.log(error);
-        res.status(500).send(`fail`)
-    }
+        console.error(error);
+        return res.status(500).send(`fail`)
+    } 
 
-    res.send('ok')
-}
+    return res.send('ok')
+    
+    }

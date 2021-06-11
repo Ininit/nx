@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node"
 import { createPage } from './utils/notion'
 import { notionConfig } from './config/index'
-import { getTitle } from "./utils/puppeteer"
+import { getTitle } from "./utils/cheerio"
 module.exports = async (req: VercelRequest, res: VercelResponse) => {
     
     try {
@@ -9,18 +9,15 @@ module.exports = async (req: VercelRequest, res: VercelResponse) => {
         const { body } = req
 
         if(!body) {
-            res.status(400).send(`url and title miss`)
-            return
+            return res.status(400).send(`url and title miss`)
         }
 
         if(!body.url) {
-            res.status(400).send(`url required`)
-            return
+            return res.status(400).send(`url required`)
         }
 
         if(!body.title) {
-            res.status(400).send(`title required`)
-            return
+            return res.status(400).send(`title required`)
         }
 
         const reps = await createPage({
@@ -30,10 +27,10 @@ module.exports = async (req: VercelRequest, res: VercelResponse) => {
             title: body.title || getTitle(body.url),
         })
 
-        res.send(`${reps.object}-${body.title} created success`)
+        return res.send(`${reps.object}-${body.title}`)
     } catch (err) {
-        console.log(err)
-        res.status(500).send(`add fail`)
+        console.error(err)
+        return res.status(500).send(`add fail`)
     }
 
 }
